@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package Data;
+
+service DataStream {
+    rpc StreamData(DataRequest) returns (stream DataResponse) {}
+}
+
+message DataRequest {}
+message DataResponse {
+    string time = 1;
+    double interarrival = 2;
+    string service = 3;
+}

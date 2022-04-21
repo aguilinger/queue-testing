@@ -1,0 +1,19 @@
+[package]
+name = "write_data"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name="server"
+path="./src/server.rs"
+
+
+[dependencies]
+rand = "0.4.6"
+tonic = "0.7"
+tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+tokio-stream = "0.1.8"
+prost = "0.10"
+
+[build-dependencies]
+tonic-build = "0.7"
