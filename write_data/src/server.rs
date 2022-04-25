@@ -1,9 +1,9 @@
 #![feature(duration_checked_float)]
-use rand::distributions::{Exp, IndependentSample};
-use rand::Rng;
+use rand::distributions::{Exp, Alphanumeric};
+use rand::{Rng,thread_rng};
 use std::fs::File;
 use std::io::prelude::*;
-use std::thread;
+use std::{thread,iter};
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::ReceiverStream;
@@ -19,9 +19,9 @@ pub mod write_data {
 #[derive(Debug, Default)]
 pub struct MyDataStream {}
 
-fn wait(lambda: f64) -> f64 {
-    let exp = Exp::new(lambda);
-    let v = exp.ind_sample(&mut rand::thread_rng());
+fn wait(lambda: f32) -> f64 {
+    let exp = Exp::new(lambda.into());
+    let v = rand::thread_rng().sample(exp);
     return v;
 }
 
@@ -36,13 +36,18 @@ impl DataStream for MyDataStream {
 
         let (tx, rx) = mpsc::channel(4);
         tokio::spawn(async move {
-            let lambda = 0.2;
+            let DataRequest { lambda_arriv } = request.into_inner();
             let mut growing_file = File::create("data_file.txt").unwrap();
-            let random_bytes = rand::thread_rng().gen::<[u8; 32]>();
+            let random_string = thread_rng()
+                .sample_iter(&Alphanumeric)
+                .take(300000)
+                .map(char::from)
+                .collect::<String>();
+            let random_bytes= random_string.as_bytes();
             loop {
-                let interarrival = wait(lambda);
+                let interarrival = wait(lambda_arriv);
 
-                let ii_duration = Duration::try_from_secs_f64(lambda);
+                let ii_duration = Duration::try_from_secs_f64(interarrival);
                 thread::sleep(ii_duration.unwrap());
 
                 let now = Instant::now();
@@ -69,7 +74,7 @@ impl DataStream for MyDataStream {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let addr = "[::1]:50051".parse()?;
+    let addr = "0.0.0.0:50051".parse()?;
     let stream = MyDataStream::default();
 
     Server::builder()

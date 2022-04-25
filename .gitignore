@@ -1,1 +1,7 @@
 target
+.terraform*
+terraform.tfstate*
+terraform
+data_file.txt
+bck
+.ipynb_checkpoints

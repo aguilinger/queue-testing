@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  client:
+    build: .
+    network_mode: "host"
+    environment:
+      - REDIS_URL=localhost
+      - REDIS_PORT=6379
+      - CLIENT_URL
+      - LAMBDA
+  note:
+    image: jupyter/scipy-notebook:6b49f3337709
+    command: ["jupyter", "notebook", "--no-browser","--NotebookApp.token=''","--NotebookApp.password=''"]
+    ports:
+      - 8888:8888
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    volumes: 
+      - cache:/data
+volumes:
+  cache:
+    driver: local

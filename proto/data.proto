@@ -6,7 +6,9 @@ service DataStream {
     rpc StreamData(DataRequest) returns (stream DataResponse) {}
 }
 
-message DataRequest {}
+message DataRequest {
+    float lambda_arriv = 1;
+}
 message DataResponse {
     string time = 1;
     double interarrival = 2;
