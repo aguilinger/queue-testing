@@ -5,3 +5,7 @@ terraform
 data_file.txt
 bck
 .ipynb_checkpoints
+.local
+.ipython
+.cache
+.jupyter

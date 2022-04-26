@@ -1,17 +1,19 @@
 version: "3.9"
 
 services:
-  client:
-    build: .
-    network_mode: "host"
-    environment:
-      - REDIS_URL=localhost
-      - REDIS_PORT=6379
-      - CLIENT_URL
-      - LAMBDA
+  # client:
+  #   build: .
+  #   network_mode: "host"
+  #   environment:
+  #     - REDIS_URL=localhost
+  #     - REDIS_PORT=6379
+  #     - CLIENT_URL
+  #     - LAMBDA
   note:
     image: jupyter/scipy-notebook:6b49f3337709
     command: ["jupyter", "notebook", "--no-browser","--NotebookApp.token=''","--NotebookApp.password=''"]
+    volumes:
+      - ./notebook:/home/jovyan
     ports:
       - 8888:8888
   redis:
